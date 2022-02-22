@@ -8,11 +8,12 @@ import handlebars from "handlebars";
 import path from "path";
 import fs from "fs";
 import ora from "ora";
+import childProcess from "child_process";
 
 // 模板对应git地址
 const templateMap = {
   "wd-view":
-    "direct:https://github.com/lijieniu/wdview-template.git#wdview-template-default",
+    "direct:git@github.com:lijieniu/wdview-template.git#wdview-template-default",
   "wd-view-laravel": "",
 };
 program.version("v0.0.1");
@@ -36,7 +37,7 @@ program
         ])
         .then((res) => {
           const spinner = ora("正在执行git clone...").start();
-          const downloadPath = process.cwd() + "/" + res.project_name;
+          const downloadPath = process.cwd() + "/" + name;
           download(
             templateMap[res.project_name],
             downloadPath,
@@ -48,17 +49,37 @@ program
                 if (fs.existsSync(packagePath)) {
                   const content = fs.readFileSync(packagePath).toString();
                   const template = handlebars.compile(content);
-                  const result = template(res);
+                  const result = template({
+                    project_name: name,
+                  });
                   fs.writeFileSync(packagePath, result);
+                  install(downloadPath);
                 } else {
                   console.error("failed! no files");
                 }
               } else {
-                ora.fail("下载失败！");
+                spinner.fail("下载失败！");
               }
             }
           );
         });
     }
   });
+const install = (path) => {
+  inquirer
+    .prompt({
+      name: "npm_install",
+      type: "confirm",
+      message: "是否立即安装依赖？",
+    })
+    .then((res) => {
+      if (res.npm_install) {
+        const spinner = ora("正在安装依赖...").start();
+        const cmd = "cd " + path + " && npm install wd-view";
+        childProcess.exec(cmd, (error, stdout, stderr) => {
+          spinner.succeed("安装完成");
+        });
+      }
+    });
+};
 program.parse(process.argv);
