@@ -13,8 +13,10 @@ import childProcess from "child_process";
 // 模板对应git地址
 const templateMap = {
   "wd-view":
-    "direct:git@github.com:lijieniu/wdview-template.git#wdview-template-default",
+    "direct:https://github.com/lijieniu/wdview-template.git#wdview-template-default",
   "wd-view-laravel": "",
+  "vue2 typescript vue-router": "",
+  "vue3 vite typescript vue-router": "",
 };
 program.version("v0.0.1");
 program
@@ -53,7 +55,7 @@ program
                     project_name: name,
                   });
                   fs.writeFileSync(packagePath, result);
-                  install(downloadPath);
+                  install(name);
                 } else {
                   console.error("failed! no files");
                 }
@@ -65,7 +67,7 @@ program
         });
     }
   });
-const install = (path) => {
+const install = (name) => {
   inquirer
     .prompt({
       name: "npm_install",
@@ -75,9 +77,12 @@ const install = (path) => {
     .then((res) => {
       if (res.npm_install) {
         const spinner = ora("正在安装依赖...").start();
-        const cmd = "cd " + path + " && npm install wd-view";
+        const cmd = "cd " + process.cwd() + "/" + name + " && npm install";
         childProcess.exec(cmd, (error, stdout, stderr) => {
           spinner.succeed("安装完成");
+          console.log("现在可以运行以下命令：");
+          console.log("\t cd " + name);
+          console.log("\t npm run dev");
         });
       }
     });
