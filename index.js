@@ -84,6 +84,11 @@ const install = (name) => {
           console.log("\t cd " + name);
           console.log("\t npm run dev");
         });
+      } else {
+        console.log("现在可以运行以下命令：");
+        console.log("\t cd " + name);
+        console.log("\t npm install");
+        console.log("\t npm run dev");
       }
     });
 };
