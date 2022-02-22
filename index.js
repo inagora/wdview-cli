@@ -18,7 +18,7 @@ const templateMap = {
   "vue2 typescript vue-router": "",
   "vue3 vite typescript vue-router": "",
 };
-program.version("v0.0.1");
+program.version("v0.0.3");
 program
   .command("create <name>")
   .description("create a new project")
