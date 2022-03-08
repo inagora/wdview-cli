@@ -86,11 +86,18 @@ const install = (name) => {
         const cmd = "cd " + process.cwd() + "/" + name + " && npm install";
         // 加上loading状态
         // 检测退出状态
-        childProcess.exec(cmd, (error, stdout, stderr) => {
+        const workerProcess = childProcess.exec(cmd);
+        workerProcess.stdout.on("data", (data) => {
+          console.log(data);
+        });
+        workerProcess.stdout.on("close", (code) => {
           spinner.succeed("安装完成");
           console.log("现在可以运行以下命令：");
           console.log("\t cd " + name);
-          console.log("\t npm run dev");
+          console.log("\t composer install");
+          console.log("\t php artisan key:generate");
+          console.log("\t php artisan serve");
+          process.exit(0);
         });
       } else {
         console.log("现在可以运行以下命令：");
@@ -115,10 +122,14 @@ const installLaravel = (name) => {
       .then((res) => {
         if (res.npm_install) {
           const spinner = ora("正在安装依赖...").start();
-          const cmd = "cd " + process.cwd() + "/" + name + " && npm install";
+          const cmd = "cd " + process.cwd() + "/" + name + " && npm aaaa";
           // 加上loading状态
           // 检测退出状态
-          childProcess.exec(cmd, (error, stdout, stderr) => {
+          const workerProcess = childProcess.exec(cmd);
+          workerProcess.stdout.on("data", (data) => {
+            console.log(data);
+          });
+          workerProcess.stdout.on("close", (code) => {
             spinner.succeed("安装完成");
             console.log("现在可以运行以下命令：");
             console.log("\t cd " + name);
