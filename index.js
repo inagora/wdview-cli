@@ -9,6 +9,7 @@ import path from "path";
 import fs from "fs";
 import ora from "ora";
 import childProcess from "child_process";
+import spawn from "cross-spawn";
 
 // 模板对应git地址
 const templateMap = {
@@ -82,21 +83,17 @@ const install = (name) => {
     })
     .then((res) => {
       if (res.npm_install) {
-        const spinner = ora("正在安装依赖...").start();
+        const spinner = ora("正在安装依赖...");
         const cmd = "cd " + process.cwd() + "/" + name + " && npm install";
-        // 加上loading状态
-        // 检测退出状态
-        const workerProcess = childProcess.exec(cmd);
-        workerProcess.stdout.on("data", (data) => {
-          console.log(data);
+        const workerProcess = spawn(cmd, {
+          stdio: "inherit",
+          shell: true,
         });
-        workerProcess.stdout.on("close", (code) => {
+        workerProcess.on("close", (code) => {
           spinner.succeed("安装完成");
           console.log("现在可以运行以下命令：");
           console.log("\t cd " + name);
-          console.log("\t composer install");
-          console.log("\t php artisan key:generate");
-          console.log("\t php artisan serve");
+          console.log("\t npm run dev");
           process.exit(0);
         });
       } else {
@@ -121,21 +118,20 @@ const installLaravel = (name) => {
       })
       .then((res) => {
         if (res.npm_install) {
-          const spinner = ora("正在安装依赖...").start();
-          const cmd = "cd " + process.cwd() + "/" + name + " && npm aaaa";
-          // 加上loading状态
-          // 检测退出状态
-          const workerProcess = childProcess.exec(cmd);
-          workerProcess.stdout.on("data", (data) => {
-            console.log(data);
+          const spinner = ora("正在安装依赖...");
+          const cmd = "cd " + process.cwd() + "/" + name + " && npm install";
+          const workerProcess = spawn(cmd, {
+            stdio: "inherit",
+            shell: true,
           });
-          workerProcess.stdout.on("close", (code) => {
+          workerProcess.on("close", (code) => {
             spinner.succeed("安装完成");
             console.log("现在可以运行以下命令：");
             console.log("\t cd " + name);
             console.log("\t composer install");
             console.log("\t php artisan key:generate");
             console.log("\t php artisan serve");
+            process.exit(0);
           });
         } else {
           console.log("现在可以运行以下命令：");
